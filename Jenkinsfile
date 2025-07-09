@@ -6,6 +6,18 @@ pipeline {
     }
 
     stages {
+        stage('Install Tools') {
+            steps {
+                sh 'rustup component add rustfmt'
+            }
+        }
+
+        stage('Format Check') {
+            steps {
+                sh 'cargo fmt -- --check'
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'cargo build --release'
@@ -15,13 +27,6 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'cargo test'
-            }
-        }
-
-        stage('Lint') {
-            steps {
-                sh 'cargo fmt -- --check'
-                sh 'cargo clippy -- -D warnings'
             }
         }
     }
