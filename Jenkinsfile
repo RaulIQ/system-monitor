@@ -17,5 +17,12 @@ pipeline {
                 sh 'cargo test'
             }
         }
+
+        stage('Lint') {
+            steps {
+                sh 'cargo fmt -- --check'
+                sh 'cargo clippy -- -D warnings'
+            }
+        }
     }
 }
