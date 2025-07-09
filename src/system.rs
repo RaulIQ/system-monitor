@@ -12,16 +12,17 @@ pub struct Status {
 }
 
 pub async fn get_status() -> Json<Status> {
+    Json(collect_status())
+}
+
+pub fn collect_status() -> Status {
     let mut sys = System::new_all();
 
-    // Первый вызов — инициализация
+    sys.refresh_cpu_all();
+    std::thread::sleep(std::time::Duration::from_millis(500));
     sys.refresh_cpu_all();
 
-    // Дать немного времени для сбора статистики
-    tokio::time::sleep(std::time::Duration::from_millis(500)).await;
-
-    // Второй вызов — обновление значений
-    sys.refresh_cpu_all();
+    sys.refresh_memory();
 
     let cpu_usage = sys
         .cpus()
@@ -29,18 +30,29 @@ pub async fn get_status() -> Json<Status> {
         .map(|c| c.cpu_usage())
         .sum::<f32>() / sys.cpus().len() as f32;
 
-    sys.refresh_memory();
-
     let memory_total = sys.total_memory();
     let memory_used = sys.used_memory();
-
     let memory_usage_percent = (memory_used as f32 / memory_total as f32) * 100.0;
 
-    Json(Status {
+    Status {
         cpu_usage,
         memory_total,
         memory_used,
         memory_usage_percent,
         uptime: sysinfo::System::uptime(),
-    })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn status_fields_are_valid() {
+        let status = collect_status();
+        assert!(status.cpu_usage >= 0.0);
+        assert!(status.memory_total > 0);
+        assert!(status.memory_used <= status.memory_total);
+        assert!(status.memory_usage_percent <= 100.0);
+    }
 }

@@ -1,4 +1,4 @@
-use axum::{response::Html, routing::get, Router};
+use axum::{routing::get, Router};
 mod system;
 
 #[tokio::main]
