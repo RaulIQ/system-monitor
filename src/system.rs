@@ -1,6 +1,6 @@
 use axum::Json;
 use serde::Serialize;
-use sysinfo::{System};
+use sysinfo::System;
 
 #[derive(Serialize)]
 pub struct Status {
@@ -24,11 +24,7 @@ pub fn collect_status() -> Status {
 
     sys.refresh_memory();
 
-    let cpu_usage = sys
-        .cpus()
-        .iter()
-        .map(|c| c.cpu_usage())
-        .sum::<f32>() / sys.cpus().len() as f32;
+    let cpu_usage = sys.cpus().iter().map(|c| c.cpu_usage()).sum::<f32>() / sys.cpus().len() as f32;
 
     let memory_total = sys.total_memory();
     let memory_used = sys.used_memory();
