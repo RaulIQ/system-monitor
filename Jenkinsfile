@@ -9,6 +9,7 @@ pipeline {
         stage('Install Tools') {
             steps {
                 sh 'rustup component add rustfmt'
+                sh 'cargo install cargo-deb || true'
             }
         }
 
@@ -27,6 +28,11 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'cargo test'
+            }
+        }
+        stage('Build .deb') {
+            steps {
+                sh 'cargo deb --no-build '
             }
         }
     }
