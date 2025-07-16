@@ -8,3 +8,11 @@ axum = "0.8.4"
 tokio = { version = "1.0", features = ["full"] }
 sysinfo = "0.35.2"
 serde = { version = "1.0.219", features = ["serde_derive"] }
+
+[package.metadata.deb]
+name = "system-monitor"
+maintainer = "Alimbekov Raul Azatovich <raulalimbekov@gmail.com>"
+section = "utils" 
+priority = "optional"
+depends = "$auto"
+assets = ["$auto"]
